@@ -30,31 +30,35 @@ Usage
                 --parseRequires -p  Whether to parse source for require calls. 
                                     Default: true
     
-             --indexCoreModules -c  Whether to index code modules requires to resolution map. 
+             --indexCoreModules -c  Whether to index code modules requires.
                                     Default: false
     
-         --indexPackageJSONDeps -d  Whether to index dependencies from package.json to resolution map. 
+         --indexPackageJSONDeps -d  Whether to index package.json dependencies.
                                     Default: true
     
-      --indexPackageJSONOptDeps -o  Whether to index optional dependencies from package.json to resolution map. 
+      --indexPackageJSONOptDeps -o  Whether to index optional package.json dependencies.
                                     Default: true
     
-          --indexRequiresByName -n  Whether to index require calls by name to resolution map. 
+          --indexRequiresByName -n  Whether to index require calls by name.
                                     Default: true
     
-          --indexRequiresByPath -p  Whether to index require calls by path to resolution map. 
+          --indexRequiresByPath -p  Whether to index require calls by path.
                                     Default: false
     
-       --recursePackageJSONDeps -D  Whether to recursively resolve dependencies from package.json. 
+       --recursePackageJSONDeps -D  Whether to recursively resolve 
+                                    package.json dependencies.
                                     Default: true
     
-    --recursePackageJSONOptDeps -O  Whether to recursively resolve optional dependencies from package.json. 
+    --recursePackageJSONOptDeps -O  Whether to recursively resolve 
+                                    package.json optional dependencies.
                                     Default: true
     
-        --recurseRequiresByName -N  Whether to recursively resolve require calls by name. 
+        --recurseRequiresByName -N  Whether to recursively resolve 
+                                    require calls by name. 
                                     Default: true
     
-        --recurseRequiresByPath -P  Whether to recursively resolve require calls by path. 
+        --recurseRequiresByPath -P  Whether to recursively resolve 
+                                    require calls by path. 
                                     Default: true
     
                       --verbose -v  Display logging information.
@@ -67,7 +71,8 @@ Usage
                                     Default: process.cwd()
     
                   --externalize -x  A module that will not be recursed. 
-                                    Allows resolutions trees to be split into parts.
+                                    Allows resolutions trees to be 
+                                    split into parts.
                                     Can be used multiple times.
 
 ### Programmatically

@@ -28,7 +28,7 @@
         limit: 1000000, // Maximum number of modules checked recursively. 
                         // Setting this to `1` stops the recursion at checking only the given module's dependencies.
                         // But this isn't really a recursion counter, as all dependencies beyond the first level count towards the limit individually.
-        offsetPath: __dirname, // All resolved modules are made relative to this path.
+        offsetPath: process.cwd(), // All resolved modules are made relative to this path.
         externalize: [] // A list of files to not recurse over.
     };
     
@@ -231,7 +231,7 @@
 
         // Resolve absolute module path.
         var filePathAbsolute = path.resolve(resolve.sync(name, {
-            basedir: __dirname
+            basedir: process.cwd()
         }));
 
         // Check if absolute filepath has not already been checked.

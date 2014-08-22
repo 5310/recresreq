@@ -64,7 +64,7 @@ Usage
                                     Default: 1000000
     
                    --offsetPath -f  File path to make all resolved paths relative to. 
-                                    Default: __dirpath
+                                    Default: process.cwd()
     
                   --externalize -x  A module that will not be recursed. 
                                     Allows resolutions trees to be split into parts.

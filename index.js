@@ -256,6 +256,7 @@
     module.exports.checkByFile = checkByFile;
     module.exports.defaultOpts = defaultOpts;
     module.exports.clearResolution = clearResolution;
+    module.exports.version = '0.0.0'
 
 
 

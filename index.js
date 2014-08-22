@@ -14,6 +14,7 @@
 
     var opts = {
         parseRequires: true, // Naively parses source for require statements.
+        indexCoreModules: false, //Whether to index core modules or skip them.
         indexPackageJSONDeps: true, // Indexes dependencies in pacakge.json
         indexRequiresByName: true, // Indexes parsed dependencies required by name.
         indexRequiresByPath: false, // Indexes parsed dependencies required by path.
@@ -55,6 +56,7 @@
                     if (opts.indexPackageJSONDeps) {
                         if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
                         deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                        if (opts.verbose) console.log("Indexed package.json dependency `" + moduleName + "`.");
                     }
 
                     // Add dependency to be checked recursively.
@@ -85,8 +87,15 @@
                     var moduleName = eval(match);
 
                     if (resolve.isCore(moduleName)) {
-                        // Throw a fit if module is core to Node.
-                        throw "Core modules do not run in the browser!";
+                        if (opts.indexCoreModules) {
+                            // Make path absolute.
+                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
+                            deps[basedir][moduleName] = moduleName;
+                            if (opts.verbose) console.log("Indexed core module `" + moduleName + "`.");
+                        } else {
+                            // Throw a fit if module is core to Node.
+                            throw "Core modules do not run in the browser!";
+                        }
                     }
                     else {
 
@@ -111,11 +120,11 @@
                             if (path.resolve(file.path) != modulePathAbsolute) {
                                 if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
                                 deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
-                                if (opts.verbose) console.log("Indexed dependency `" + moduleName + "`.");
+                                if (opts.verbose) console.log("Indexed required module `" + moduleName + "`.");
                             }
                         }
                         else {
-                            if (opts.verbose) console.log("Did not index dependency `" + moduleName + "`.");
+                            if (opts.verbose) console.log("Did not index required module `" + moduleName + "`.");
                         }
 
                         // Add dependency to be checked recursively.

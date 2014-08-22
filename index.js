@@ -78,7 +78,7 @@
                         }
     
                         // Add dependency to be checked recursively.
-                        if (opts.recursePackageJSONDeps) {
+                        if  (opts.recursePackageJSONDeps && toCheck.indexOf(modulePathAbsolute) <= -1 ) {
                             toCheck.push(modulePathAbsolute);
                         }
     
@@ -103,7 +103,7 @@
                         }
     
                         // Add dependency to be checked recursively.
-                        if (opts.recursePackageJSONOptDeps) {
+                        if ( opts.recursePackageJSONOptDeps && toCheck.indexOf(modulePathAbsolute) <= -1 ) {
                             toCheck.push(modulePathAbsolute);
                         }
     
@@ -177,7 +177,7 @@
                         // Add dependency to be checked recursively.
                         if (toCheck.indexOf(modulePathAbsolute) <= -1) {
                             toCheck.push(modulePathAbsolute);
-                            if (opts.verbose) console.log("Will not parse path dependency " + moduleName + "`.");
+                            if (opts.verbose) console.log("Will recurse `" + moduleName + "`.");
                         }
 
                     }

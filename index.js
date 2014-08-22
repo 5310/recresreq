@@ -21,8 +21,8 @@
         recurseRequiresByPath: true, // Recurse through parsed dependencies required by path.
         verbose: false, // Print logging info.
         limit: 1000000, // Maximum number of modules checked recursively. 
-        // Setting this to `1` stops the recursion at checking only the given module's dependencies.
-        // But this isn't really a recursion counter, as all dependencies beyond the first level count towards the limit individually.
+                        // Setting this to `1` stops the recursion at checking only the given module's dependencies.
+                        // But this isn't really a recursion counter, as all dependencies beyond the first level count towards the limit individually.
         offsetPath: __dirname // All resolved modules are made relative to this path.
     };
 
@@ -43,19 +43,23 @@
         if (opts.recursePackageJSONDeps) {
             require('closest-package').sync(basedir, function(json, filename) {
                 for (var moduleName in json.dependencies) {
+
                     // Resolve module path.
                     var modulePathLocal = resolve.sync(moduleName, {
                         basedir: basedir
                     });
                     // Make path absolute.
                     var modulePathAbsolute = path.resolve(modulePathLocal);
+
                     // Add resolution to output.
                     if (opts.indexPackageJSONDeps) {
                         if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
                         deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
                     }
+
                     // Add dependency to be checked recursively.
                     toCheck.push(modulePathAbsolute);
+
                 }
                 return true; //NOTE: Because this is a filtering function and the lookup would onlt stop at true. And we do want the very closest one.
             });
@@ -64,29 +68,44 @@
         // Parse file body for requires.
 
         if (opts.parseRequires) {
+
             var input = file.contents.toString('utf-8');
-            input.replace(/\brequire\(([^\)]*)\)/g, function(fullMatch, match) {
+
+            var regex = /\brequire\(([^\)]*)\)/g;
+
+            var matchObject;
+            while (matchObject = regex.exec(input)) {
+
+                var fullMatch = matchObject[0];
+                var match = matchObject[1];
+
                 try {
+
                     // Evaluate and "clean" module name.
                     var moduleName = eval(match);
+
                     if (resolve.isCore(moduleName)) {
                         // Throw a fit if module is core to Node.
                         throw "Core modules do not run in the browser!";
                     }
                     else {
+
                         // Else continue.
                         // Check if module was required by path.
                         var requiredByPath = /^(?:\.{0,2})\//.test(moduleName);
+
                         // Check whether to parse path'd modules.
                         if (!opts.recurseRequiresByPath && requiredByPath) {
                             throw "Will not parse modules required by path.";
                         }
+
                         // Resolve module.
                         var modulePathLocal = resolve.sync(moduleName, {
                             basedir: basedir
                         });
                         // Make path absolute.
                         var modulePathAbsolute = path.resolve(modulePathLocal);
+
                         // Add resolution to index of module wasn't required in path form.
                         if (opts.indexRequiresByName && (opts.indexRequiresByPath || !requiredByPath)) {
                             if (path.resolve(file.path) != modulePathAbsolute) {
@@ -98,18 +117,22 @@
                         else {
                             if (opts.verbose) console.log("Did not index dependency `" + moduleName + "`.");
                         }
+
                         // Add dependency to be checked recursively.
                         if (toCheck.indexOf(modulePathAbsolute) <= -1) {
                             toCheck.push(modulePathAbsolute);
                             if (opts.verbose) console.log("Will not parse path dependency " + moduleName + "`.");
                         }
+
                     }
+
                 }
                 catch (e) {
                     console.error("Could not resolve `" + match + "`: " + (e.toString()));
                 }
-                return fullMatch;
-            });
+
+            }
+
         }
 
         var modulePathAbsolute = toCheck.shift();
@@ -124,10 +147,12 @@
 
     // Shortcut for checking by filepath or module name.
     var checkByModule = function(name) {
+
         // Resolve absolute module path.
         var filePathAbsolute = path.resolve(resolve.sync(name, {
             basedir: __dirname
-        })); //BUG: Does not resolve simple relative path.
+        }));
+
         // Check if absolute filepath has not already been checked.
         if (checked.indexOf(filePathAbsolute) <= -1) {
             // Add absolute filepath to checked list.
@@ -140,11 +165,15 @@
                 contents: fs.readFileSync(filePathAbsolute)
             }));
         }
+
         // Verbose log for files checked for requires.
         if (opts.verbose) {
             console.log("Parsing dependency `" + name + "`.");
         }
+
+        // Return the resolution map.
         return deps;
+
     };
 
 

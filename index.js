@@ -304,6 +304,8 @@
             .alias( 'recurseRequiresByName', 'N' )
             .alias( 'recurseRequiresByPath', 'P' )
             .alias( 'verbose', 'v' )
+            .alias( 'limit', 'l' )
+            .alias( 'offsetPath', 'f' )
             .alias( 'externalize', 'x' )
             .argv;
         var args = argv._;

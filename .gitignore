@@ -1,3 +1,10 @@
+# Personal
+scratch/*
+
+# C9.io
+
+.c9/*
+
 # Logs
 logs
 *.log

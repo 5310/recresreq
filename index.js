@@ -12,7 +12,7 @@
     var checked = []; // List of modules already checked.
     var toCheck = []; // List of modules to parse next.
 
-    var opts = {
+    var defaultOpts = {
         parseRequires: true, // Naively parses source for require statements.
         indexCoreModules: false, //Whether to index core modules or skip them.
         indexPackageJSONDeps: true, // Indexes dependencies in pacakge.json
@@ -29,9 +29,25 @@
                         // But this isn't really a recursion counter, as all dependencies beyond the first level count towards the limit individually.
         offsetPath: __dirname // All resolved modules are made relative to this path.
     };
+    
+    // Parse opts.
+    var parseOpts = function(opts) {
+        var o = {};
+        for ( var key in defaultOpts ) {
+            if ( typeof opts === typeof {} && opts[key] !== undefined ) {
+                o[key] = opts[key];
+            } else {
+                o[key] = defaultOpts[key];
+            }
+        }
+        return o;
+    ;}
 
     // Actual logic for parsing files.
-    var checkByFile = function(file) {
+    var checkByFile = function( file, opts ) {
+        
+        // Parse opts.
+        var opts = parseOpts(opts);
 
         // Check for the "recursion" limit.
         if (opts.limit >= 0) {
@@ -180,7 +196,7 @@
 
         var modulePathAbsolute = toCheck.shift();
         while (modulePathAbsolute) {
-            checkByModule(modulePathAbsolute);
+            checkByModule( modulePathAbsolute, opts );
             modulePathAbsolute = toCheck.shift();
         }
 
@@ -189,7 +205,10 @@
 
 
     // Shortcut for checking by filepath or module name.
-    var checkByModule = function(name) {
+    var checkByModule = function( name, opts ) {
+        
+        // Parse opts.
+        var opts = parseOpts(opts);
 
         // Resolve absolute module path.
         var filePathAbsolute = path.resolve(resolve.sync(name, {
@@ -206,7 +225,7 @@
                 base: path.dirname(filePathAbsolute),
                 path: filePathAbsolute,
                 contents: fs.readFileSync(filePathAbsolute)
-            }));
+            }), opts);
         }
 
         // Verbose log for files checked for requires.
@@ -222,7 +241,7 @@
 
 
     // Exports.
-    checkByModule.opts = opts;
+    checkByModule.defaultOpts = defaultOpts;
     checkByModule.checkByFile = checkByFile;
     module.exports = checkByModule;
 
@@ -230,10 +249,11 @@
 
     // Run from command-line.
     if (require.main === module) {
+        var opts;
         var args = require('yargs').argv._;
         for (var i = 0; i < args.length; i++) {
             var infile = args[i];
-            console.log(checkByModule(infile));
+            console.log(checkByModule( infile, opts ));
         }
     }
 

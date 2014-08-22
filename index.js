@@ -22,6 +22,7 @@
         indexRequiresByPath: false, // Indexes parsed dependencies required by path.
         recursePackageJSONDeps: true, // Recurse through package.json dependencies.
         recursePackageJSONOptDeps: true, // Recurse through package.json optional dependencies.
+        recurseRequiresByName: true, //TODO: Recurse through parsed dependencies required by path.
         recurseRequiresByPath: true, // Recurse through parsed dependencies required by path.
         verbose: false, // Print logging info.
         limit: 1000000, // Maximum number of modules checked recursively. 
@@ -253,7 +254,31 @@
     // Run from command-line.
     if (require.main === module) {
         
-        var argv = require('yargs').argv;
+        var argv = require('yargs')
+            .default(defaultOpts)
+            .boolean('parseRequires')
+            .boolean('indexCoreModules')
+            .boolean('indexPackageJSONDeps')
+            .boolean('indexPackageJSONOptDeps')
+            .boolean('indexRequiresByName')
+            .boolean('indexRequiresByPath')
+            .boolean('recursePackageJSONDeps')
+            .boolean('recursePackageJSONOptDeps')
+            .boolean('recurseRequiresByName')
+            .boolean('recurseRequiresByPath')
+            .boolean('verbose')
+            .alias( 'parseRequires', 'r' )
+            .alias( 'indexCoreModules', 'c' )
+            .alias( 'indexPackageJSONDeps', 'd' )
+            .alias( 'indexPackageJSONOptDeps', 'o' )
+            .alias( 'indexRequiresByName', 'n' )
+            .alias( 'indexRequiresByPath', 'p' )
+            .alias( 'recursePackageJSONDeps', 'D' )
+            .alias( 'recursePackageJSONOptDeps', 'O' )
+            .alias( 'recurseRequiresByName', 'N' )
+            .alias( 'recurseRequiresByPath', 'P' )
+            .alias( 'verbose', 'v' )
+            .argv;
         var args = argv._;
         
         setOpts(argv);

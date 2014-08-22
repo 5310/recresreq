@@ -28,7 +28,8 @@
         limit: 1000000, // Maximum number of modules checked recursively. 
                         // Setting this to `1` stops the recursion at checking only the given module's dependencies.
                         // But this isn't really a recursion counter, as all dependencies beyond the first level count towards the limit individually.
-        offsetPath: __dirname // All resolved modules are made relative to this path.
+        offsetPath: __dirname, // All resolved modules are made relative to this path.
+        externalize: [] // A list of files to not recurse over.
     };
     
     // Set opts.
@@ -55,6 +56,22 @@
         }
 
         var basedir = path.resolve(path.dirname(file.path));
+        
+        // Skip externalized files.
+        if ( opts.externalize.length > 0 ) {
+            for ( var i in opts.externalize ) {
+                // Resolve external file path.
+                var externalPathLocal = resolve.sync(opts.externalize[i], {
+                    basedir: basedir
+                });
+                // Make external file path absolute.
+                var externalPathAbsolute = path.resolve(externalPathLocal);
+                if ( path.resolve(file.path) == externalPathAbsolute ) {
+                    if (opts.verbose) console.log("External file `" + opts.externalize[i] + "` skipped.");
+                    return
+                }
+            }
+        }
 
         // Parse package.json.
         if ( opts.indexPackageJSONDeps || opts.indexPackageJSONOptDeps || opts.recursePackageJSONDeps || opts.recursePackageJSONOptDeps ) {
@@ -287,8 +304,13 @@
             .alias( 'recurseRequiresByName', 'N' )
             .alias( 'recurseRequiresByPath', 'P' )
             .alias( 'verbose', 'v' )
+            .alias( 'externalize', 'x' )
             .argv;
         var args = argv._;
+        
+        if ( typeof argv.externalize !== typeof [] ) {
+            argv.externalize = [argv.externalize];
+        }
         
         setOpts(argv);
         

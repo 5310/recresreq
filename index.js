@@ -16,9 +16,12 @@
         parseRequires: true, // Naively parses source for require statements.
         indexCoreModules: false, //Whether to index core modules or skip them.
         indexPackageJSONDeps: true, // Indexes dependencies in pacakge.json
+        indexPackageJSONOptDeps: true, // Indexes optional dependencies in pacakge.json
+        indexPac: true, // Indexes dependencies in pacakge.json
         indexRequiresByName: true, // Indexes parsed dependencies required by name.
         indexRequiresByPath: false, // Indexes parsed dependencies required by path.
         recursePackageJSONDeps: true, // Recurse through package.json dependencies.
+        recursePackageJSONOptDeps: true, // Recurse through package.json optional dependencies.
         recurseRequiresByPath: true, // Recurse through parsed dependencies required by path.
         verbose: false, // Print logging info.
         limit: 1000000, // Maximum number of modules checked recursively. 
@@ -40,29 +43,60 @@
 
         var basedir = path.resolve(path.dirname(file.path));
 
-        // Parse package.json and add all dependencies to toCheck.
-        if (opts.recursePackageJSONDeps) {
+        // Parse package.json.
+        if ( opts.indexPackageJSONDeps || opts.indexPackageJSONOptDeps || opts.recursePackageJSONDeps || opts.recursePackageJSONOptDeps ) {
             require('closest-package').sync(basedir, function(json, filename) {
-                for (var moduleName in json.dependencies) {
-
-                    // Resolve module path.
-                    var modulePathLocal = resolve.sync(moduleName, {
-                        basedir: basedir
-                    });
-                    // Make path absolute.
-                    var modulePathAbsolute = path.resolve(modulePathLocal);
-
-                    // Add resolution to output.
-                    if (opts.indexPackageJSONDeps) {
-                        if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
-                        deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
-                        if (opts.verbose) console.log("Indexed package.json dependency `" + moduleName + "`.");
+                
+                if ( opts.indexPackageJSONDeps || opts.recursePackageJSONDeps ) {
+                    for (var moduleName in json.dependencies) {
+    
+                        // Resolve module path.
+                        var modulePathLocal = resolve.sync(moduleName, {
+                            basedir: basedir
+                        });
+                        // Make path absolute.
+                        var modulePathAbsolute = path.resolve(modulePathLocal);
+    
+                        // Add resolution to output.
+                        if (opts.indexPackageJSONDeps) {
+                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
+                            deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                            if (opts.verbose) console.log("Indexed package.json dependency `" + moduleName + "`.");
+                        }
+    
+                        // Add dependency to be checked recursively.
+                        if (opts.recursePackageJSONDeps) {
+                            toCheck.push(modulePathAbsolute);
+                        }
+    
                     }
-
-                    // Add dependency to be checked recursively.
-                    toCheck.push(modulePathAbsolute);
-
                 }
+                
+                if ( opts.indexPackageJSONOptDeps || opts.recursePackageJSONOptDeps ) {
+                    for (var moduleName in json.optionalDependencies) {
+    
+                        // Resolve module path.
+                        var modulePathLocal = resolve.sync(moduleName, {
+                            basedir: basedir
+                        });
+                        // Make path absolute.
+                        var modulePathAbsolute = path.resolve(modulePathLocal);
+    
+                        // Add resolution to output.
+                        if (opts.indexPackageJSONOptDeps) {
+                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
+                            deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                            if (opts.verbose) console.log("Indexed package.json optional dependency `" + moduleName + "`.");
+                        }
+    
+                        // Add dependency to be checked recursively.
+                        if (opts.recursePackageJSONOptDeps) {
+                            toCheck.push(modulePathAbsolute);
+                        }
+    
+                    }
+                }
+                
                 return true; //NOTE: Because this is a filtering function and the lookup would onlt stop at true. And we do want the very closest one.
             });
         }

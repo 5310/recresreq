@@ -1,6 +1,6 @@
 {
   "name": "recresreq",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Recuresively resolve requires (and package.json dependencies) of a Node.js source file and output a potentially convenient resolution map.",
   "main": "index.js",
   "scripts": {

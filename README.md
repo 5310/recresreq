@@ -121,9 +121,9 @@ While one of the "core features" of the module is to parse sources for arbitrary
 
 Even _srsbzns_ tools like [detective] doesn't handle generative requires, and for good reason. I didn't use detective because I felt it might be overkill. Might consider having it as an optional parser.
 
-It does however still resolve recorded package.json dependencies, so hopefully as properly specified project will still find it's dependencies covered.
+It does however still resolve recorded package.json dependencies, so hopefully a properly specified project will still find it's dependencies covered.
 
-And it's worth sheepishly pointing out again that this module simply creates resolution map. Actually injecting the dependencies is the responsibility of another module that I haven't yet...um...built.
+And it's worth sheepishly pointing out again that this module simply creates a resolution map. Actually injecting the dependencies is the responsibility of another module that I haven't yet...um...built.
 
 Roadmap
 -------

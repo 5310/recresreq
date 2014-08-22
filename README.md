@@ -41,6 +41,14 @@ It does however still resolve recorded package.json dependencies, so hopefully a
 
 And it's worth sheepishly pointing out again that this module simply creates resolution map. Actually injecting the dependencies is the responsibility of another module that I haven't yet...um...built.
 
+Roadmap
+-------
+
+-   Implement resolving folders recursively.
+-   Option to dedupe all modules that are a root dependency.
+    -   That way, running this on an `npm dedupe`'d project will produce substantially cleaner resolution map.
+-   Read options from `package.json` config.
+-   
 Credits
 -------
 

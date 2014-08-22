@@ -9,7 +9,8 @@ The produced resolution map is in the format of:
 
     [
         a base-directory: {
-            a module name or require call syntax: resolved path to the module from this base-directory,
+            a module name or require call syntax: 
+                resolved path to the module from this base-directory,
             ...
         },
         ...  

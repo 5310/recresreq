@@ -130,7 +130,7 @@ Roadmap
 
 -   Implement resolving folders recursively.
 -   Option to dedupe all modules that are a root dependency.
-    -   That way, running this on an `npm dedupe`'d project will produce substantially cleaner resolution map.
+    -   That way, running this on an `npm dedupe`'d project will produce a substantially cleaner resolution map.
 -   Read options from `package.json` config.
 
 Credits

@@ -163,7 +163,7 @@
                         var modulePathAbsolute = path.resolve(modulePathLocal);
 
                         // Add resolution to index of module wasn't required in path form.
-                        if (opts.indexRequiresByName && (opts.indexRequiresByPath || !requiredByPath)) {
+                        if ( (opts.indexRequiresByName && !requiredByPath ) || (opts.indexRequiresByPath && requiredByPath) ) {
                             if (path.resolve(file.path) != modulePathAbsolute) {
                                 if (typeof resolution[basedir] !== typeof {}) resolution[basedir] = {};
                                 resolution[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);

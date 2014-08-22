@@ -112,7 +112,7 @@ But a resolution map of all the dependencies and naïvely parsed requires might 
 Caveats
 -------
 
-This Node.js module is very much a naïve hack and quite unstable. Consider it pre- version 0.0.0
+This is my first Node.js module is very much a naïve hack. It's still "beta", and subject to breaking. I do plan on using it in my development workflow, and will keep it updated.
 
 While one of the "core features" of the module is to parse sources for arbitrary require calls, it is done _very_ naïvely. It's just a regex match for `require(...)` calls, which is then eval'd. This means:
 

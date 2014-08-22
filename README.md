@@ -105,7 +105,7 @@ Usage
 Why?
 ----
 
-I intend to use this resolution map is to be able to inject these scripts and modules into the browser as another hackish way of making CommonJS style requires work on browsers without having to compile bundles, register modules manually, or wrap module sources with extra code. But that's another matter entirely, and will be handled by another module. 
+I intend to use this resolution map to inject these dependencies into the browser as another hackish way of making CommonJS style requires work on browsers without having to compile bundles, register modules manually, or wrap module sources with extra code. But that's another matter entirely, and will be handled by another module. 
 
 But a resolution map of all the dependencies and naïvely parsed requires might be useful for other cases too, maybe? I mean, why not?
 

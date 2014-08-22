@@ -8,7 +8,7 @@
 
     var File = require('vinyl'); // The module file to be checked.
 
-    var deps = {}; // The dependency tree being resolved.
+    var resolution = {}; // The dependency tree being resolved.
     var checked = []; // List of modules already checked.
     var toCheck = []; // List of modules to parse next.
 
@@ -30,24 +30,20 @@
         offsetPath: __dirname // All resolved modules are made relative to this path.
     };
     
-    // Parse opts.
-    var parseOpts = function(opts) {
-        var o = {};
+    // Set opts.
+    var opts = {};
+    var setOpts = function(passedOpts) {
         for ( var key in defaultOpts ) {
-            if ( typeof opts === typeof {} && opts[key] !== undefined ) {
-                o[key] = opts[key];
+            if ( typeof passedOpts === typeof {} && passedOpts[key] !== undefined ) {
+                opts[key] = passedOpts[key];
             } else {
-                o[key] = defaultOpts[key];
+                opts[key] = defaultOpts[key];
             }
         }
-        return o;
-    ;}
+    };
 
     // Actual logic for parsing files.
-    var checkByFile = function( file, opts ) {
-        
-        // Parse opts.
-        var opts = parseOpts(opts);
+    var checkByFile = function(file) {
 
         // Check for the "recursion" limit.
         if (opts.limit >= 0) {
@@ -75,8 +71,8 @@
     
                         // Add resolution to output.
                         if (opts.indexPackageJSONDeps) {
-                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
-                            deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                            if (typeof resolution[basedir] !== typeof {}) resolution[basedir] = {};
+                            resolution[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
                             if (opts.verbose) console.log("Indexed package.json dependency `" + moduleName + "`.");
                         }
     
@@ -100,8 +96,8 @@
     
                         // Add resolution to output.
                         if (opts.indexPackageJSONOptDeps) {
-                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
-                            deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                            if (typeof resolution[basedir] !== typeof {}) resolution[basedir] = {};
+                            resolution[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
                             if (opts.verbose) console.log("Indexed package.json optional dependency `" + moduleName + "`.");
                         }
     
@@ -139,8 +135,8 @@
                     if (resolve.isCore(moduleName)) {
                         if (opts.indexCoreModules) {
                             // Make path absolute.
-                            if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
-                            deps[basedir][moduleName] = moduleName;
+                            if (typeof resolution[basedir] !== typeof {}) resolution[basedir] = {};
+                            resolution[basedir][moduleName] = moduleName;
                             if (opts.verbose) console.log("Indexed core module `" + moduleName + "`.");
                         } else {
                             // Throw a fit if module is core to Node.
@@ -168,8 +164,8 @@
                         // Add resolution to index of module wasn't required in path form.
                         if (opts.indexRequiresByName && (opts.indexRequiresByPath || !requiredByPath)) {
                             if (path.resolve(file.path) != modulePathAbsolute) {
-                                if (typeof deps[basedir] !== typeof {}) deps[basedir] = {};
-                                deps[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
+                                if (typeof resolution[basedir] !== typeof {}) resolution[basedir] = {};
+                                resolution[basedir][moduleName] = path.relative(opts.offsetPath, modulePathAbsolute);
                                 if (opts.verbose) console.log("Indexed required module `" + moduleName + "`.");
                             }
                         }
@@ -196,7 +192,7 @@
 
         var modulePathAbsolute = toCheck.shift();
         while (modulePathAbsolute) {
-            checkByModule( modulePathAbsolute, opts );
+            checkByModule(modulePathAbsolute);
             modulePathAbsolute = toCheck.shift();
         }
 
@@ -205,10 +201,7 @@
 
 
     // Shortcut for checking by filepath or module name.
-    var checkByModule = function( name, opts ) {
-        
-        // Parse opts.
-        var opts = parseOpts(opts);
+    var checkByModule = function(name) {
 
         // Resolve absolute module path.
         var filePathAbsolute = path.resolve(resolve.sync(name, {
@@ -234,27 +227,45 @@
         }
 
         // Return the resolution map.
-        return deps;
+        return resolution;
 
+    };
+    
+    
+    
+    // Clear resolved dependencies.
+    var clearResolution = function () {
+        while(resolution.length > 0) {
+            resolution.pop();
+        }
     };
 
 
 
     // Exports.
-    checkByModule.defaultOpts = defaultOpts;
-    checkByModule.checkByFile = checkByFile;
     module.exports = checkByModule;
+    module.exports.checkByFile = checkByFile;
+    module.exports.defaultOpts = defaultOpts;
+    module.exports.clearResolution = clearResolution;
 
 
 
     // Run from command-line.
     if (require.main === module) {
-        var opts;
-        var args = require('yargs').argv._;
+        
+        var argv = require('yargs').argv;
+        var args = argv._;
+        
+        setOpts(argv);
+        
+        clearResolution();
+        
         for (var i = 0; i < args.length; i++) {
             var infile = args[i];
-            console.log(checkByModule( infile, opts ));
+            checkByModule(infile);
         }
+        console.log(resolution);
+        
     }
 
 }).call(this);

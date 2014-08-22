@@ -22,7 +22,7 @@
         indexRequiresByPath: false, // Indexes parsed dependencies required by path.
         recursePackageJSONDeps: true, // Recurse through package.json dependencies.
         recursePackageJSONOptDeps: true, // Recurse through package.json optional dependencies.
-        recurseRequiresByName: true, //TODO: Recurse through parsed dependencies required by path.
+        recurseRequiresByName: true, //TODO: Recurse through parsed dependencies required by name.
         recurseRequiresByPath: true, // Recurse through parsed dependencies required by path.
         verbose: false, // Print logging info.
         limit: 1000000, // Maximum number of modules checked recursively. 
@@ -176,7 +176,15 @@
 
                         // Add dependency to be checked recursively.
                         if (toCheck.indexOf(modulePathAbsolute) <= -1) {
-                            toCheck.push(modulePathAbsolute);
+                            if (requiredByPath) {
+                                if (opts.recurseRequiresByPath) {
+                                    toCheck.push(modulePathAbsolute);
+                                }
+                            } else {
+                                if (opts.recurseRequiresByName) {
+                                    toCheck.push(modulePathAbsolute);
+                                }
+                            }
                             if (opts.verbose) console.log("Will recurse `" + moduleName + "`.");
                         }
 

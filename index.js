@@ -273,7 +273,7 @@
     module.exports.checkByFile = checkByFile;
     module.exports.defaultOpts = defaultOpts;
     module.exports.clearResolution = clearResolution;
-    module.exports.version = '0.1.0'
+    module.exports.version = '0.1.1'
 
 
 

@@ -81,31 +81,59 @@ Usage
 
     var recresreq = require('recresreq');
     
-    var resolutionMap = recresreq('recresreq');
-    
-    console.log(resolutionMap);
+    recresreq.clearResolution();
+    recresreq.setOpts({
+        externalize: ['vinyl']
+    });
+    console.log(recresreq('recresreq'));
     
 #### Output
 
-    { 
-        '/home/ubuntu/workspace': 
-            { 
-                resolve: 'node_modules/resolve/index.js',
-                vinyl: 'node_modules/vinyl/index.js',
-                'closest-package': 'node_modules/closest-package/index.js',
-                yargs: 'node_modules/yargs/index.js' 
-            },
-        '/home/ubuntu/workspace/node_modules/vinyl': 
-            { 
-                'clone-stats': 'node_modules/vinyl/node_modules/clone-stats/index.js',
-                lodash: 'node_modules/vinyl/node_modules/lodash/dist/lodash.js' 
-            },
-        '/home/ubuntu/workspace/node_modules/vinyl/lib': 
-            { 
-                'clone-stats': 'node_modules/vinyl/node_modules/clone-stats/index.js',
-                lodash: 'node_modules/vinyl/node_modules/lodash/dist/lodash.js' 
-            }
-     }
+    {
+        '/home/ubuntu/workspace': {
+            'closest-package': 'node_modules/closest-package/index.js',
+            resolve: 'node_modules/resolve/index.js',
+            vinyl: 'node_modules/vinyl/index.js',
+            yargs: 'node_modules/yargs/index.js'
+        }
+    }
+
+#### Methods
+
+##### `recresreq(`_`module`_`)`
+
+-   _`module`_
+    -   The Node.js module or source file to recursively resolve for requires (and package.json dependencies).
+    -   Must be a string with the module name or a path.
+-   Returns:
+    -   The object map with all resolutions.
+-   All resolutions are cached to within the module.
+-   Subsequent calls will include previousl resolved maps unless cleared with `.clearResolution()`.
+
+##### `recresreq.checkByFile(`_`file`_`)`
+
+-   _`file`_
+    -   [vinyl]-like file-object recursively resolve for requires (and package.json dependencies). 
+-   Returns:
+    -   The object map with all resolutions.
+-   Same as `recresreq()`, but checks a [vinyl]-like file-object instead.
+
+##### `recresreq.setOpts(`_`opts`_`)`
+
+-   _`opts`_
+    -   An object containing specific keys and values that will override the defaults.
+    -   If objectargument is missing, the options are reset to default.
+    -   Options are the same as the full command line keys.
+-   Sets the options for the module persistently. 
+-   Susequent calls to the cached module will use the same options.
+
+
+##### `recresreq.clearResolution()`
+
+-   Clears the resolution map. 
+
+
+
 
 Why?
 ----
@@ -145,6 +173,7 @@ Portions of this code is quite brazenly "based" off [preresolve], which batch-re
 
 
 
-[detective]: https://github.com/substack/node-detective
-[preresolve]: https://github.com/650Industries/preresolve
+[detective]: https://www.npmjs.org/package/detective
+[preresolve]: https://www.npmjs.org/package/preresolve
 [brwserreq]: https://github.com/5310/brwserreq
+[vinyl]: https://www.npmjs.org/package/vinyl

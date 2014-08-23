@@ -68,7 +68,7 @@
                 var externalPathAbsolute = path.resolve(externalPathLocal);
                 if ( path.resolve(file.path) == externalPathAbsolute ) {
                     if (opts.verbose) console.log("External file `" + opts.externalize[i] + "` skipped.");
-                    return
+                    return;
                 }
             }
         }
@@ -222,6 +222,9 @@
             modulePathAbsolute = toCheck.shift();
         }
 
+        // Return the resolution map.
+        return resolution;
+
     };
 
 
@@ -271,9 +274,9 @@
     // Exports.
     module.exports = checkByModule;
     module.exports.checkByFile = checkByFile;
-    module.exports.defaultOpts = defaultOpts;
+    module.exports.setOpts = setOpts;
     module.exports.clearResolution = clearResolution;
-    module.exports.version = '0.1.2'
+    module.exports.version = '0.1.3';
 
 
 

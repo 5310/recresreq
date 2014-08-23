@@ -118,9 +118,9 @@ Usage
     -   The object map with all resolutions.
 -   Same as `recresreq()`, but checks a [vinyl]-like file-object instead.
 
-##### `recresreq.setOpts(`_`opts`_`)`
+##### `recresreq.setOpts(`_`[opts]`_`)`
 
--   _`opts`_
+-   _`[opts]`_
     -   An object containing specific keys and values that will override the defaults.
     -   If objectargument is missing, the options are reset to default.
     -   Options are the same as the full command line keys.

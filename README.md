@@ -1,6 +1,8 @@
 recresreq
 =========
 
+**This module is deemed redundant and won't be continued.**
+
 Recuresively resolve requires (and package.json dependencies) of a Node.js source file and output a potentially convenient resolution map.
 
 The goal of this module is to create a static map of all the dependencies and (naïvely parsed) require calls of a Node.js project recursively. 
@@ -18,8 +20,53 @@ The produced resolution map is in the format of:
 
 Where the base-directories are all the unique locations of any module or source recursively `recresreq`'s.
 
+
+
+Why? (And why not?)
+-------------------
+
+I had intended to use this resolution map to inject these dependencies into the browser as another hackish way of making CommonJS style requires work on browsers without having to compile bundles, register modules manually, or wrap module sources with extra code. But that's another matter entirely, and will be handled by another module. 
+
+But I decided it's not worth it as a publicly released module for several reasons:
+
+-    It's futile trying to parse require calls from source, procedural require calls will always be left unparsed. 
+-    Modules required by relative or absolute paths can be resolved trivially anyway.
+-    As for declared dependencies, [resolve-recurse] already very neatly resolves all package.json dependencies anyway. The little benefit this module offers by structuring the resolutions by folder name and then module name to url can be done far more cleanly and sensibly without the rest of the redundant functionality.
+
+I still intend to write a module inject dependencies in the browser for a Node project under-development, like I do manually now. But I'll do so without reinventing the wheel (poorly at that).
+
+
+
+Caveats
+-------
+
+This is my first Node.js module and it's very much a naïve hack. It's still "beta", and subject to breaking. I do plan on using it in my development workflow, and will keep it updated.
+
+While one of the "core features" of the module is to parse sources for arbitrary require calls, it is done _very_ naïvely. It's just a regex match for `require(...)` calls, which is then eval'd. This means:
+
+-   Aliases for `require` are simply not noticed.
+-   And runtime-generated require calls will mostly likely not if it has any arbitrary variables, or worse, work wrongly.
+
+Even _srsbzns_ tools like [detective] doesn't handle generative requires, and for good reason. I didn't use detective because I felt it might be overkill. Might consider having it as an optional parser.
+
+It does however still resolve recorded package.json dependencies, so hopefully a properly specified project will still find it's dependencies covered.
+
+And it's worth sheepishly pointing out again that this module simply creates a resolution map. Actually injecting the dependencies is the responsibility of another module that I haven't yet...um...built.
+
+
+
 Usage
 -----
+
+### Installation
+
+**You shouldn't really need to use this module.**
+
+[detecive] [resolve] [resolve-recurse] and a bit of busywork will serve all the functionality this module provided other than the particular structuring of the resolution map, and do it far better.
+
+But if you want to anyway:
+
+    npm install git://github.com/5310/recresreq.git
 
 ### Command line
 
@@ -134,37 +181,16 @@ Usage
 
 
 
+Roadmap?
+--------
 
-Why?
-----
-
-I intend to use this resolution map to inject these dependencies into the browser as another hackish way of making CommonJS style requires work on browsers without having to compile bundles, register modules manually, or wrap module sources with extra code. But that's another matter entirely, and will be handled by another module. 
-
-But a resolution map of all the dependencies and naïvely parsed requires might be useful for other cases too, maybe? I mean, why not?
-
-Caveats
--------
-
-This is my first Node.js module and it's very much a naïve hack. It's still "beta", and subject to breaking. I do plan on using it in my development workflow, and will keep it updated.
-
-While one of the "core features" of the module is to parse sources for arbitrary require calls, it is done _very_ naïvely. It's just a regex match for `require(...)` calls, which is then eval'd. This means:
-
--   Aliases for `require` are simply not noticed.
--   And runtime-generated require calls will mostly likely not if it has any arbitrary variables, or worse, work wrongly.
-
-Even _srsbzns_ tools like [detective] doesn't handle generative requires, and for good reason. I didn't use detective because I felt it might be overkill. Might consider having it as an optional parser.
-
-It does however still resolve recorded package.json dependencies, so hopefully a properly specified project will still find it's dependencies covered.
-
-And it's worth sheepishly pointing out again that this module simply creates a resolution map. Actually injecting the dependencies is the responsibility of another module that I haven't yet...um...built.
-
-Roadmap
--------
-
+-   Bug in programmatically resolving multiple modules breaking results of all resolutions after the first.
 -   Implement resolving folders recursively.
 -   Option to dedupe all modules that are a root dependency.
     -   That way, running this on an `npm dedupe`'d project will produce a substantially cleaner resolution map.
 -   Read options from `package.json` config.
+
+
 
 Credits
 -------

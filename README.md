@@ -62,7 +62,7 @@ Usage
 
 **You shouldn't really need to use this module.**
 
-[detective] [resolve] [resolve-recurse] and a bit of busywork will serve all the functionality this module provided other than the particular structuring of the resolution map, and do it far better.
+[detective], [resolve], [resolve-recurse] and a bit of busywork will serve all the functionality this module provided other than the particular structuring of the resolution map, and do it far better.
 
 But if you want to anyway:
 

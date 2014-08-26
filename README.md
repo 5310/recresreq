@@ -201,5 +201,6 @@ Portions of this code is quite brazenly "based" off [preresolve], which batch-re
 
 [detective]: https://www.npmjs.org/package/detective
 [preresolve]: https://www.npmjs.org/package/preresolve
+[resolve-recurse]: https://www.npmjs.org/package/resolve-recurse
 [brwserreq]: https://github.com/5310/brwserreq
 [vinyl]: https://www.npmjs.org/package/vinyl
